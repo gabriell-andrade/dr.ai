@@ -1,15 +1,71 @@
-async function analisar() {
-    const pessoaA = document.getElementById("pessoaA").value;
-    const pessoaB = document.getElementById("pessoaB").value;
-    const resultadoDiv = document.getElementById("resultado");
+let pessoaA = "";
+let pessoaB = "";
+let etapaAtual = 1;
 
-    if (!pessoaA || !pessoaB) {
-        alert("Preencha as duas versões da discussão.");
+const etapaDiv = document.getElementById("etapa");
+const resultadoDiv = document.getElementById("resultado");
+
+renderEtapa();
+
+function renderEtapa() {
+    if (etapaAtual === 1) {
+        etapaDiv.innerHTML = `
+            <div class="input-group">
+                <label>Primeiro relato</label>
+                <textarea id="inputA" placeholder="Descreva o que aconteceu..."></textarea>
+                <button onclick="salvarPessoaA()">Continuar</button>
+            </div>
+        `;
+    }
+
+    if (etapaAtual === 2) {
+        etapaDiv.innerHTML = `
+            <div class="status-box">
+                Primeiro relato salvo com segurança
+            </div>
+
+            <div class="input-group">
+                <label>Segundo relato</label>
+                <textarea id="inputB" placeholder="Agora descreva o seu ponto de vista..."></textarea>
+                <button onclick="salvarPessoaB()">Analisar</button>
+            </div>
+        `;
+    }
+}
+
+function salvarPessoaA() {
+    const input = document.getElementById("inputA").value;
+
+    if (!input) {
+        alert("Preencha o primeiro relato.");
         return;
     }
 
+    pessoaA = input;
+    etapaAtual = 2;
+    renderEtapa();
+}
+
+function salvarPessoaB() {
+    const input = document.getElementById("inputB").value;
+
+    if (!input) {
+        alert("Preencha o segundo relato.");
+        return;
+    }
+
+    pessoaB = input;
+    analisar();
+}
+
+async function analisar() {
+    etapaDiv.innerHTML = `
+        <div class="status-box">
+            Analisando a situação...
+        </div>
+    `;
+
     resultadoDiv.classList.remove("hidden");
-    resultadoDiv.innerHTML = "Analisando...";
 
     try {
         const response = await fetch("/analisar", {
@@ -25,21 +81,50 @@ async function analisar() {
 
         const data = await response.json();
 
+        // remove o "analisando..."
+        etapaDiv.innerHTML = "";
+
         resultadoDiv.innerHTML = `
-            <h3>Análise da DR</h3>
+            <h3>Decisão da análise</h3>
 
-            <p><strong>Pessoa A:</strong><br>${data.errosA}</p>
+            <div class="card">
+                <strong>Análise da Pessoa A:</strong>
+                <p>${data.errosA}</p>
+            </div>
 
-            <p><strong>Pessoa B:</strong><br>${data.errosB}</p>
+            <div class="card">
+                <strong>Análise da Pessoa B:</strong>
+                <p>${data.errosB}</p>
+            </div>
 
-            <p><strong>Responsabilidade:</strong><br>${data.responsabilidade}</p>
+            <div class="card destaque">
+                <strong>Responsabilidade:</strong>
+                <p>${data.responsabilidade}</p>
+            </div>
 
-            <p><strong>Resumo:</strong><br>${data.resumo}</p>
+            <div class="card">
+                <strong>Conclusão:</strong>
+                <p>${data.resumo}</p>
+            </div>
 
-            <p><strong>Sugestão:</strong><br>${data.sugestao}</p>
+            <div class="card sugestao">
+                <strong>Recomendação:</strong>
+                <p>${data.sugestao}</p>
+            </div>
+
+            <button onclick="resetar()">Nova análise</button>
         `;
 
     } catch (error) {
+        etapaDiv.innerHTML = "";
         resultadoDiv.innerHTML = "Erro ao conectar com o servidor.";
     }
+}
+
+function resetar() {
+    pessoaA = "";
+    pessoaB = "";
+    etapaAtual = 1;
+    resultadoDiv.classList.add("hidden");
+    renderEtapa();
 }
