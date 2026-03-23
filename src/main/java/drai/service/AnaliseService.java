@@ -72,8 +72,6 @@ public class AnaliseService {
                     entity,
                     String.class
             );
-            System.out.println("RESPONSE BODY:");
-            System.out.println(response.getBody());
 
             JsonNode root = mapper.readTree(response.getBody());
 
@@ -86,16 +84,10 @@ public class AnaliseService {
                     .path("text")
                     .asText();
 
-            System.out.println("CONTENT:");
-            System.out.println(content);
-
-            // limpa JSON (caso venha texto junto)
             String jsonLimpo = content.substring(
                     content.indexOf("{"),
                     content.lastIndexOf("}") + 1
             );
-            System.out.println("JSON LIMPO:");
-            System.out.println(jsonLimpo);
 
             JsonNode json = mapper.readTree(jsonLimpo);
 
