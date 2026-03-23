@@ -30,6 +30,23 @@ body {
     flex: 1;
 }
 
+.status-box {
+    background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05));
+    border: 1.5px solid #22c55e;
+    color: #4ade80;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(34,197,94,0.15);
+}
+
+.form-content > p {
+    margin-bottom: 16px;
+}
+
 h1 {
     font-size: 28px;
     font-weight: 600;
