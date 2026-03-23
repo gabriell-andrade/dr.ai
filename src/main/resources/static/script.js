@@ -148,6 +148,11 @@ async function analisar() {
         resultadoDiv.innerHTML = `
             <h3>Decisão da análise</h3>
 
+            <div class="card">
+                <strong>Resumo da situação</strong>
+                <p>${data.resumoSituacao}</p>
+            </div>
+
             <div class="card destaque">
                 <strong>Veredito final</strong>
                 <p>${veredito}</p>

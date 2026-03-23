@@ -2,11 +2,20 @@ package drai.dto;
 
 public class AnaliseResponse {
 
+    private String resumoSituacao;
     private String errosA;
     private String errosB;
     private String responsabilidade;
     private String resumo;
     private String sugestao;
+
+    public String getResumoSituacao() {
+        return resumoSituacao;
+    }
+
+    public void setResumoSituacao(String resumoSituacao) {
+        this.resumoSituacao = resumoSituacao;
+    }
 
     public String getErrosA() {
         return errosA;
