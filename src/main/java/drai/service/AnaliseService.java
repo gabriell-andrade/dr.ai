@@ -23,26 +23,45 @@ public class AnaliseService {
         ObjectMapper mapper = new ObjectMapper();
 
         String prompt = """
-        Analise a seguinte discussão de casal.
+        Você é um mediador especialista em conflitos interpessoais.
 
-        Pessoa A:
+        Sua função é analisar os dois relatos e tomar uma decisão clara sobre a responsabilidade de cada pessoa.
+        
+        IMPORTANTE:
+        - Use EXCLUSIVAMENTE os nomes fornecidos.
+        - NÃO utilize "Pessoa A" ou "Pessoa B".
+        - Sempre se refira diretamente pelos nomes.
+        
+        REGRAS:
+        - Não seja neutro sem motivo.
+        - Evite 50%% / 50%% sem justificativa real.
+        - Sempre atribua porcentagens somando 100%%.
+        - Seja direto, claro e firme.
+        - Não tente agradar os dois lados.
+        
+        RELATOS:
+        
+        %s:
         %s
-
-        Pessoa B:
+        
+        %s:
         %s
-
-        Responda APENAS em JSON válido:
-
+        
+        FORMATO DA RESPOSTA (JSON válido, sem texto fora do JSON):
+        
         {
-          "errosA": "...",
-          "errosB": "...",
-          "responsabilidade": "...",
-          "resumo": "...",
-          "sugestao": "..."
+          "errosA": "explique os erros de %s",
+          "errosB": "explique os erros de %s",
+          "responsabilidade": "%s: X%% | %s: Y%%",
+          "resumo": "conclusão direta dizendo quem teve mais responsabilidade",
+          "sugestao": "recomendação prática"
         }
-
-        Seja imparcial e construtivo.
-        """.formatted(request.getPessoaA(), request.getPessoaB());
+        """.formatted(
+                        request.getNomeA(), request.getPessoaA(),
+                        request.getNomeB(), request.getPessoaB(),
+                        request.getNomeA(), request.getNomeB(),
+                        request.getNomeA(), request.getNomeB()
+        );
 
         String body = """
         {
@@ -95,7 +114,11 @@ public class AnaliseService {
             result.setErrosA(json.path("errosA").asText());
             result.setErrosB(json.path("errosB").asText());
             result.setResponsabilidade(json.path("responsabilidade").asText());
-            result.setResumo(json.path("resumo").asText());
+            result.setResumo(
+                    json.path("resumo").asText()
+                            .replace("Pessoa A", request.getNomeA())
+                            .replace("Pessoa B", request.getNomeB())
+            );
             result.setSugestao(json.path("sugestao").asText());
 
             return result;
